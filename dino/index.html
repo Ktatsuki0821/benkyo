@@ -38,6 +38,16 @@
             transition: bottom 0.2s;
         }
 
+        #player.invincible {
+            animation: blink 0.5s step-start infinite; /* 点滅アニメーション */
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
         #obstacle {
             position: absolute;
             width: 50px;
@@ -46,6 +56,7 @@
             bottom: 0;
             right: 0;
             animation: moveObstacle 2s linear infinite;
+            animation-play-state: paused; /* 最初はアニメーション停止 */
         }
 
         @keyframes moveObstacle {
@@ -66,6 +77,35 @@
             font-size: 48px;
             color: red;
         }
+
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+
+        #lives {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -73,18 +113,46 @@
         <div id="player"></div>
         <div id="obstacle"></div>
         <div id="gameOver">Game Over</div>
+        <button id="startButton">スタート</button>
+        <div id="timer">経過時間: 0秒</div>
+        <div id="lives">残機: 2</div> <!-- 残機表示 -->
     </div>
 
     <script>
         const player = document.getElementById('player');
         const obstacle = document.getElementById('obstacle');
         const gameOverText = document.getElementById('gameOver');
+        const startButton = document.getElementById('startButton');
+        const timerDisplay = document.getElementById('timer');
+        const livesDisplay = document.getElementById('lives'); // 残機表示
         let isJumping = false; // ジャンプ中かどうかを管理するフラグ
         let gameOver = false;  // ゲームオーバーかどうかのフラグ
+        let gameStarted = false; // ゲームが開始されたかどうかのフラグ
+        let elapsedTime = 0; // 経過時間を管理する変数
+        let lives = 2; // 残機を管理する変数
+        let invincible = false; // 無敵状態を管理するフラグ
+        let timerInterval;  // 経過時間をカウントするための変数
+        let checkCollisionInterval; // 衝突チェックのための変数
+
+        // スタートボタンがクリックされたらゲーム開始
+        startButton.addEventListener('click', function() {
+            gameStarted = true;
+            gameOver = false;
+            elapsedTime = 0; // 経過時間をリセット
+            lives = 2; // 残機をリセット
+            invincible = false; // 無敵状態をリセット
+            player.classList.remove('invincible'); // 無敵時の点滅解除
+            livesDisplay.textContent = `残機: ${lives}`; // 残機表示を更新
+            gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
+            startButton.style.display = 'none'; // スタートボタンを非表示
+            obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
+            checkCollisionInterval = setInterval(checkCollision, 50); // 衝突チェックを開始
+            timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマーを更新
+        });
 
         // キーボードのEnterキーが押されたときのイベント
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !isJumping && !gameOver) {
+            if (event.key === 'Enter' && !isJumping && !gameOver && gameStarted) {
                 jump();
             }
         });
@@ -102,6 +170,8 @@
 
         // 障害物とプレイヤーの衝突をチェックする関数
         function checkCollision() {
+            if (invincible) return; // 無敵状態の場合は衝突を無視
+
             const playerRect = player.getBoundingClientRect();
             const obstacleRect = obstacle.getBoundingClientRect();
 
@@ -111,14 +181,44 @@
                 playerRect.left < obstacleRect.right &&
                 playerRect.bottom > obstacleRect.top
             ) {
-                gameOver = true;
-                gameOverText.style.display = 'block'; // "Game Over" テキストを表示
-                obstacle.style.animationPlayState = 'paused'; // 障害物のアニメーションを停止
+                if (lives > 1) {
+                    lives--; // 残機を減らす
+                    livesDisplay.textContent = `残機: ${lives}`; // 残機表示を更新
+                    triggerInvincibility(); // 無敵状態を開始
+                } else {
+                    endGame();
+                }
             }
         }
 
-        // 定期的に衝突をチェック
-        setInterval(checkCollision, 50);
+        // 無敵状態を開始する関数
+        function triggerInvincibility() {
+            invincible = true; // 無敵状態にする
+            player.classList.add('invincible'); // プレイヤーを点滅させる
+
+            // 3秒後に無敵状態を解除
+            setTimeout(() => {
+                invincible = false; // 無敵状態を解除
+                player.classList.remove('invincible'); // 点滅を終了
+            }, 3000); // 3秒間のクールタイム
+        }
+
+        // ゲーム終了処理
+        function endGame() {
+            gameOver = true;
+            gameStarted = false;
+            gameOverText.style.display = 'block'; // "Game Over" テキストを表示
+            obstacle.style.animationPlayState = 'paused'; // 障害物のアニメーションを停止
+            clearInterval(checkCollisionInterval); // 衝突チェックを停止
+            clearInterval(timerInterval); // タイマーを停止
+            startButton.style.display = 'block'; // スタートボタンを再表示
+        }
+
+        // 経過時間を更新する関数
+        function updateTimer() {
+            elapsedTime++; // 1秒経過ごとにカウントアップ
+            timerDisplay.textContent = `経過時間: ${elapsedTime}秒`; // 経過時間を表示
+        }
     </script>
 </body>
 </html>
