@@ -35,6 +35,7 @@
             background-color: blue;
             bottom: 0;
             left: 50px;
+            transition: bottom 0.2s;
         }
 
         #obstacle {
@@ -65,8 +66,9 @@
 
     <script>
         const player = document.getElementById('player');
-        let isJumping = false;
+        let isJumping = false; // ジャンプ中かどうかを管理するフラグ
 
+        // キーボードのEnterキーが押されたときのイベント
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !isJumping) {
                 jump();
@@ -74,4 +76,15 @@
         });
 
         function jump() {
-            isJumping =
+            isJumping = true;  // ジャンプ中にする
+            player.style.bottom = '150px';  // ジャンプして高さ150pxまで上昇
+
+            // 0.5秒後に元の位置に戻す
+            setTimeout(() => {
+                player.style.bottom = '0px';  // プレイヤーを地面に戻す
+                isJumping = false;  // ジャンプ終了
+            }, 500);  // 0.5秒（500ms）間ジャンプ
+        }
+    </script>
+</body>
+</html>
