@@ -3,113 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>スライドジャンプゲーム</title>
+    <title>ジャンプゲーム</title>
     <style>
-        body {
+        * {
             margin: 0;
-            background-color: #e0e0e0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #gameContainer {
-            position: relative;
-            width: 100vw;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            overflow: hidden;
             background-color: #f0f0f0;
-            transform: translateX(0); /* 初期位置 */
+        }
+
+        #gameArea {
+            position: relative;
+            width: 800px;
+            height: 200px;
+            background-color: #ffffff;
+            border: 2px solid #000;
+            overflow: hidden;
         }
 
         #player {
             position: absolute;
-            bottom: 50px;
-            left: 50px;
             width: 50px;
             height: 50px;
             background-color: blue;
+            bottom: 0;
+            left: 50px;
         }
 
-        .obstacle {
+        #obstacle {
             position: absolute;
-            bottom: 50px;
             width: 50px;
             height: 50px;
             background-color: red;
+            bottom: 0;
+            right: 0;
+            animation: moveObstacle 2s linear infinite;
+        }
+
+        @keyframes moveObstacle {
+            0% {
+                right: 0;
+            }
+            100% {
+                right: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="gameContainer">
+    <div id="gameArea">
         <div id="player"></div>
+        <div id="obstacle"></div>
     </div>
+
     <script>
         const player = document.getElementById('player');
-        const gameContainer = document.getElementById('gameContainer');
         let isJumping = false;
-        let playerPosition = 50; // プレイヤーの初期位置
-        let containerPosition = 0; // コンテナの初期位置
 
-        function createObstacle() {
-            const obstacle = document.createElement('div');
-            obstacle.classList.add('obstacle');
-            obstacle.style.left = '100vw'; // 障害物の初期位置（画面外からスタート）
-            document.getElementById('gameContainer').appendChild(obstacle);
-
-            let obstaclePosition = window.innerWidth; // 障害物の開始位置
-
-            const interval = setInterval(() => {
-                obstaclePosition -= 5; // 障害物の移動速度
-                obstacle.style.left = obstaclePosition + 'px';
-
-                // 衝突判定
-                if (obstaclePosition < 100 && obstaclePosition > 50 && !isJumping) {
-                    clearInterval(interval);
-                    alert('ゲームオーバー！');
-                    window.location.reload(); // リロードしてゲームを再開始
-                }
-
-                // 画面の外に出たら障害物を削除
-                if (obstaclePosition < -50) {
-                    clearInterval(interval);
-                    obstacle.remove();
-                }
-            }, 20);
-        }
-
-        function jump() {
-            if (isJumping) return;
-            isJumping = true;
-            let jumpHeight = 0;
-
-            const jumpInterval = setInterval(() => {
-                if (jumpHeight >= 150) {
-                    clearInterval(jumpInterval);
-                    const fallInterval = setInterval(() => {
-                        if (jumpHeight <= 0) {
-                            clearInterval(fallInterval);
-                            isJumping = false;
-                        }
-                        jumpHeight -= 5;
-                        player.style.bottom = (50 + jumpHeight) + 'px';
-                    }, 20);
-                }
-                jumpHeight += 5;
-                player.style.bottom = (50 + jumpHeight) + 'px';
-            }, 20);
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Enter') {
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !isJumping) {
                 jump();
             }
         });
 
-        // 障害物を定期的に生成
-        setInterval(createObstacle, 2000); // 2秒ごとに障害物を生成
-        // 画面を右にスライドさせる
-        const moveContainer = setInterval(() => {
-            containerPosition += 5; // スライド速度
-            gameContainer.style.transform = `translateX(-${containerPosition}px)`;
-        }, 20);
-    </script>
-</body>
-</html>
+        function jump() {
+            isJumping =
