@@ -135,7 +135,6 @@
         let invincible = false; // 無敵状態を管理するフラグ
         let timerInterval;  // 経過時間をカウントするための変数
         let checkCollisionInterval; // 衝突チェックのための変数
-        let invincibilityTimeout; // 無敵状態を管理するためのタイマー
 
         // スタートボタンがクリックされたらゲーム開始
         startButton.addEventListener('click', function() {
@@ -159,9 +158,7 @@
         // ゲームを開始する処理
         function startGame() {
             gameStarted = true;
-            invincibilityTimeout = setTimeout(() => {
-                checkCollisionInterval = setInterval(checkCollision, 50); // 3秒後に衝突チェックを開始
-            }, 3000); // 3秒間は衝突判定なし
+            checkCollisionInterval = setInterval(checkCollision, 50); // 衝突チェックを開始
             timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマーを更新
         }
 
@@ -222,9 +219,18 @@
         function endGame() {
             gameOver = true;
             gameStarted = false;
-            clearTimeout(invincibilityTimeout); // 無敵状態のタイマーを解除
             gameOverText.style.display = 'block'; // "Game Over" テキストを表示
             obstacle.style.animationPlayState = 'paused'; // 障害物のアニメーションを停止
             clearInterval(checkCollisionInterval); // 衝突チェックを停止
             clearInterval(timerInterval); // タイマーを停止
-            startButton.style.display = 'block'; // スタートボタンを再
+            startButton.style.display = 'block'; // スタートボタンを再表示
+        }
+
+        // 経過時間を更新する関数
+        function updateTimer() {
+            elapsedTime++; // 1秒経過ごとにカウントアップ
+            timerDisplay.textContent = `経過時間: ${elapsedTime}秒`; // 経過時間を表示
+        }
+    </script>
+</body>
+</html>
