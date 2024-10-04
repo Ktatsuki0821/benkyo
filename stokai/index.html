@@ -10,7 +10,7 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #87CEEB; /* 背景を青色に設定 */
+            background-color: #f4f4f4;
             color: #333;
         }
 
@@ -46,27 +46,95 @@
             width: 100%;
             bottom: 0;
         }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>こんにちは、[あなたの名前]です！</h1>
+        <h1>自己紹介を作成しよう！</h1>
     </header>
 
     <section id="about-me">
-        <h2>自己紹介</h2>
-        <p>私は[あなたの職業・趣味など]をしている[あなたの名前]です。</p>
-        <p>趣味は[趣味をリスト]です。</p>
-        <p>最近は[最近取り組んでいること]に挑戦しています。</p>
-    </section>
+        <h2>自己紹介フォーム</h2>
+        <form id="intro-form">
+            <label for="name">名前:</label>
+            <input type="text" id="name" name="name" required>
 
-    <section id="contact">
-        <h2>お問い合わせ</h2>
-        <p>メール: <a href="mailto:あなたのメールアドレス">あなたのメールアドレス</a></p>
+            <label for="job">職業・趣味:</label>
+            <input type="text" id="job" name="job" required>
+
+            <label for="hobby">趣味:</label>
+            <input type="text" id="hobby" name="hobby" required>
+
+            <label for="recent">最近取り組んでいること:</label>
+            <textarea id="recent" name="recent" rows="4" required></textarea>
+
+            <input type="submit" value="自己紹介を作成">
+        </form>
+
+        <div id="output"></div>
     </section>
 
     <footer>
-        <p>&copy; 2024 [あなたの名前]. All rights reserved.</p>
+        <p>&copy; 2024 あなたの名前. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.getElementById('intro-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // フォームの入力内容を取得
+            var name = document.getElementById('name').value;
+            var job = document.getElementById('job').value;
+            var hobby = document.getElementById('hobby').value;
+            var recent = document.getElementById('recent').value;
+
+            // 自己紹介を表示
+            var output = `
+                <h2>自己紹介</h2>
+                <p>こんにちは、<strong>${name}</strong>です！</p>
+                <p>私は<strong>${job}</strong>をしています。</p>
+                <p>趣味は<strong>${hobby}</strong>です。</p>
+                <p>最近は<strong>${recent}</strong>に取り組んでいます。</p>
+            `;
+            document.getElementById('output').innerHTML = output;
+        });
+    </script>
 </body>
 </html>
