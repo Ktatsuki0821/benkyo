@@ -30,7 +30,7 @@
         #obstacle {
             position: absolute;
             bottom: 50px;
-            right: 0;
+            left: 300px; /* 障害物の位置 */
             width: 50px;
             height: 50px;
             background-color: red;
@@ -46,27 +46,23 @@
         const player = document.getElementById('player');
         const obstacle = document.getElementById('obstacle');
         let isJumping = false;
-        let score = 0;
+        let position = 50; // プレイヤーの初期位置
 
-        function moveObstacle() {
-            let obstaclePosition = window.innerWidth;
-            obstacle.style.right = obstaclePosition + 'px';
-
+        function movePlayer() {
             const interval = setInterval(() => {
-                if (obstaclePosition < -50) {
-                    obstaclePosition = window.innerWidth;
-                    score++;
-                } else {
-                    obstaclePosition -= 5; // 障害物の速度
-                }
-
-                obstacle.style.right = obstaclePosition + 'px';
+                position += 5; // プレイヤーのスライド速度
+                player.style.left = position + 'px';
 
                 // 衝突判定
-                if (obstaclePosition < 100 && obstaclePosition > 50 && !isJumping) {
+                if (position + 50 > 300 && position < 350 && !isJumping) {
                     clearInterval(interval);
-                    alert('ゲームオーバー！スコア: ' + score);
+                    alert('ゲームオーバー！');
                     window.location.reload(); // リロードしてゲームを再開始
+                }
+
+                // 画面の外に出たらリセット
+                if (position > window.innerWidth) {
+                    position = 50; // プレイヤーを元の位置に戻す
                 }
             }, 20);
         }
@@ -99,7 +95,7 @@
             }
         });
 
-        moveObstacle();
+        movePlayer();
     </script>
 </body>
 </html>
