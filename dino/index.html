@@ -35,7 +35,7 @@
             height: 30px;
             background-color: blue;
             bottom: 0;
-            left: 50px;
+            left: 50px; /* 初期位置 */
             transition: bottom 0.2s;
         }
 
@@ -153,6 +153,7 @@
             gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
             startButton.style.display = 'none'; // スタートボタンを非表示
             obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
+            player.style.left = '50px'; // プレイヤーを初期位置に戻す
         }
 
         // ゲームを開始する処理
@@ -228,9 +229,4 @@
 
         // 経過時間を更新する関数
         function updateTimer() {
-            elapsedTime++; // 1秒経過ごとにカウントアップ
-            timerDisplay.textContent = `経過時間: ${elapsedTime}秒`; // 経過時間を表示
-        }
-    </script>
-</body>
-</html>
+            elapsedTime++; // 1秒経
