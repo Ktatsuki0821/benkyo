@@ -16,7 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #8B4513; /* 背景色を茶色に変更 */
         }
 
         #gameArea {
@@ -28,10 +28,11 @@
             overflow: hidden;
         }
 
+        /* プレイヤーのサイズを小さく */
         #player {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 30px;
+            height: 30px;
             background-color: blue;
             bottom: 0;
             left: 50px;
@@ -48,10 +49,11 @@
             }
         }
 
+        /* 障害物のサイズを小さく */
         #obstacle {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 30px;
+            height: 30px;
             background-color: red;
             bottom: 0;
             right: 0;
@@ -136,7 +138,12 @@
 
         // スタートボタンがクリックされたらゲーム開始
         startButton.addEventListener('click', function() {
-            gameStarted = true;
+            resetGame(); // ゲームをリセット
+            startGame(); // ゲームを開始
+        });
+
+        // ゲームのリセット処理
+        function resetGame() {
             gameOver = false;
             elapsedTime = 0; // 経過時間をリセット
             lives = 2; // 残機をリセット
@@ -146,9 +153,14 @@
             gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
             startButton.style.display = 'none'; // スタートボタンを非表示
             obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
+        }
+
+        // ゲームを開始する処理
+        function startGame() {
+            gameStarted = true;
             checkCollisionInterval = setInterval(checkCollision, 50); // 衝突チェックを開始
             timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマーを更新
-        });
+        }
 
         // キーボードのEnterキーが押されたときのイベント
         document.addEventListener('keydown', function(event) {
