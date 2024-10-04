@@ -147,12 +147,18 @@
             gameOver = false;
             elapsedTime = 0; // 経過時間をリセット
             lives = 2; // 残機をリセット
-            invincible = false; // 無敵状態をリセット
-            player.classList.remove('invincible'); // 無敵時の点滅解除
+            invincible = true; // スタート時は無敵状態にする
+            player.classList.add('invincible'); // プレイヤーを点滅させる
             livesDisplay.textContent = `残機: ${lives}`; // 残機表示を更新
             gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
             startButton.style.display = 'none'; // スタートボタンを非表示
             obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
+
+            // 3秒後に無敵状態を解除
+            setTimeout(() => {
+                invincible = false; // 無敵状態を解除
+                player.classList.remove('invincible'); // 点滅を終了
+            }, 3000); // 3秒間の無敵
         }
 
         // ゲームを開始する処理
@@ -227,10 +233,4 @@
         }
 
         // 経過時間を更新する関数
-        function updateTimer() {
-            elapsedTime++; // 1秒経過ごとにカウントアップ
-            timerDisplay.textContent = `経過時間: ${elapsedTime}秒`; // 経過時間を表示
-        }
-    </script>
-</body>
-</html>
+        function updateTimer
