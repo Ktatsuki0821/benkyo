@@ -153,8 +153,6 @@
             gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
             startButton.style.display = 'none'; // スタートボタンを非表示
             obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
-            player.style.bottom = '0px'; // プレイヤーを元の位置に戻す
-            player.style.left = '50px'; // プレイヤーの位置も元に戻す
         }
 
         // ゲームを開始する処理
@@ -226,5 +224,13 @@
             clearInterval(checkCollisionInterval); // 衝突チェックを停止
             clearInterval(timerInterval); // タイマーを停止
             startButton.style.display = 'block'; // スタートボタンを再表示
-            player.style.bottom = '0px'; // プレイヤーを元の位置に戻す
-           
+        }
+
+        // 経過時間を更新する関数
+        function updateTimer() {
+            elapsedTime++; // 1秒経過ごとにカウントアップ
+            timerDisplay.textContent = `経過時間: ${elapsedTime}秒`; // 経過時間を表示
+        }
+    </script>
+</body>
+</html>
