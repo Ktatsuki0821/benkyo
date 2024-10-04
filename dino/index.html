@@ -56,21 +56,35 @@
                 right: 100%;
             }
         }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div id="gameArea">
         <div id="player"></div>
         <div id="obstacle"></div>
+        <div id="gameOver">Game Over</div>
     </div>
 
     <script>
         const player = document.getElementById('player');
+        const obstacle = document.getElementById('obstacle');
+        const gameOverText = document.getElementById('gameOver');
         let isJumping = false; // ジャンプ中かどうかを管理するフラグ
+        let gameOver = false;  // ゲームオーバーかどうかのフラグ
 
         // キーボードのEnterキーが押されたときのイベント
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !isJumping) {
+            if (event.key === 'Enter' && !isJumping && !gameOver) {
                 jump();
             }
         });
@@ -85,6 +99,26 @@
                 isJumping = false;  // ジャンプ終了
             }, 500);  // 0.5秒（500ms）間ジャンプ
         }
+
+        // 障害物とプレイヤーの衝突をチェックする関数
+        function checkCollision() {
+            const playerRect = player.getBoundingClientRect();
+            const obstacleRect = obstacle.getBoundingClientRect();
+
+            // プレイヤーと障害物が重なっているかどうかをチェック
+            if (
+                playerRect.right > obstacleRect.left &&
+                playerRect.left < obstacleRect.right &&
+                playerRect.bottom > obstacleRect.top
+            ) {
+                gameOver = true;
+                gameOverText.style.display = 'block'; // "Game Over" テキストを表示
+                obstacle.style.animationPlayState = 'paused'; // 障害物のアニメーションを停止
+            }
+        }
+
+        // 定期的に衝突をチェック
+        setInterval(checkCollision, 50);
     </script>
 </body>
 </html>
