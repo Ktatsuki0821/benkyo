@@ -27,10 +27,9 @@
             background-color: blue;
         }
 
-        #obstacle {
+        .obstacle {
             position: absolute;
             bottom: 50px;
-            left: 300px; /* 障害物の位置 */
             width: 50px;
             height: 50px;
             background-color: red;
@@ -40,29 +39,35 @@
 <body>
     <div id="gameContainer">
         <div id="player"></div>
-        <div id="obstacle"></div>
     </div>
     <script>
         const player = document.getElementById('player');
-        const obstacle = document.getElementById('obstacle');
         let isJumping = false;
-        let position = 50; // プレイヤーの初期位置
+        let playerPosition = 50; // プレイヤーの初期位置
 
-        function movePlayer() {
+        function createObstacle() {
+            const obstacle = document.createElement('div');
+            obstacle.classList.add('obstacle');
+            obstacle.style.right = '0px'; // 障害物の初期位置
+            document.getElementById('gameContainer').appendChild(obstacle);
+
+            let obstaclePosition = window.innerWidth; // 障害物の開始位置
+
             const interval = setInterval(() => {
-                position += 5; // プレイヤーのスライド速度
-                player.style.left = position + 'px';
+                obstaclePosition -= 5; // 障害物の移動速度
+                obstacle.style.right = obstaclePosition + 'px';
 
                 // 衝突判定
-                if (position + 50 > 300 && position < 350 && !isJumping) {
+                if (obstaclePosition < 100 && obstaclePosition > 50 && !isJumping) {
                     clearInterval(interval);
                     alert('ゲームオーバー！');
                     window.location.reload(); // リロードしてゲームを再開始
                 }
 
-                // 画面の外に出たらリセット
-                if (position > window.innerWidth) {
-                    position = 50; // プレイヤーを元の位置に戻す
+                // 画面の外に出たら障害物を削除
+                if (obstaclePosition < -50) {
+                    clearInterval(interval);
+                    obstacle.remove();
                 }
             }, 20);
         }
@@ -95,7 +100,13 @@
             }
         });
 
-        movePlayer();
+        // 障害物を定期的に生成
+        setInterval(createObstacle, 2000); // 2秒ごとに障害物を生成
+        // プレイヤーを右にスライドさせる
+        setInterval(() => {
+            playerPosition += 5; // プレイヤーのスライド速度
+            player.style.left = playerPosition + 'px';
+        }, 20);
     </script>
 </body>
 </html>
