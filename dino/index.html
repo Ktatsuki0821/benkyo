@@ -3,21 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>横スライドブロック</title>
-    <link rel="stylesheet" href="style.css">
+    <title>スライドジャンプゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #e0e0e0;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        #player {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+        }
+
+        #obstacle {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <button id="prevBtn" class="nav-btn">←</button>
-        <div class="slider">
-            <div class="block" style="background-color: red;"></div>
-            <div class="block" style="background-color: blue;"></div>
-            <div class="block" style="background-color: green;"></div>
-            <div class="block" style="background-color: yellow;"></div>
-        </div>
-        <button id="nextBtn" class="nav-btn">→</button>
+    <div id="gameContainer">
+        <div id="player"></div>
+        <div id="obstacle"></div>
     </div>
+    <script>
+        const player = document.getElementById('player');
+        const obstacle = document.getElementById('obstacle');
+        let isJumping = false;
+        let score = 0;
 
-    <script src="script.js"></script>
+        function moveObstacle() {
+            let obstaclePosition = window.innerWidth;
+            obstacle.style.right = obstaclePosition + 'px';
+
+            const interval = setInterval(() => {
+                if (obstaclePosition < -50) {
+                    obstaclePosition = window.innerWidth;
+                    score++;
+                } else {
+                    obstaclePosition -= 5; // 障害物の速度
+                }
+
+                obstacle.style.right = obstaclePosition + 'px';
+
+                // 衝突判定
+                if (obstaclePosition < 100 && obstaclePosition > 50 && !isJumping) {
+                    clearInterval(interval);
+                    alert('ゲームオーバー！スコア: ' + score);
+                    window.location.reload(); // リロードしてゲームを再開始
+                }
+            }, 20);
+        }
+
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            let jumpHeight = 0;
+
+            const jumpInterval = setInterval(() => {
+                if (jumpHeight >= 150) {
+                    clearInterval(jumpInterval);
+                    const fallInterval = setInterval(() => {
+                        if (jumpHeight <= 0) {
+                            clearInterval(fallInterval);
+                            isJumping = false;
+                        }
+                        jumpHeight -= 5;
+                        player.style.bottom = (50 + jumpHeight) + 'px';
+                    }, 20);
+                }
+                jumpHeight += 5;
+                player.style.bottom = (50 + jumpHeight) + 'px';
+            }, 20);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Enter') {
+                jump();
+            }
+        });
+
+        moveObstacle();
+    </script>
 </body>
 </html>
