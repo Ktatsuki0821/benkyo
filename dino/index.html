@@ -138,7 +138,6 @@
 
         // スタートボタンがクリックされたらゲーム開始
         startButton.addEventListener('click', function() {
-            resetGame(); // ゲームをリセット
             startGame(); // ゲームを開始
         });
 
@@ -163,6 +162,8 @@
 
         // ゲームを開始する処理
         function startGame() {
+            if (gameStarted) return; // すでにゲームが始まっている場合は何もしない
+            resetGame(); // ゲームをリセット
             gameStarted = true;
             checkCollisionInterval = setInterval(checkCollision, 50); // 衝突チェックを開始
             timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマーを更新
@@ -232,5 +233,4 @@
             startButton.style.display = 'block'; // スタートボタンを再表示
         }
 
-        // 経過時間を更新する関数
-        function updateTimer
+       
