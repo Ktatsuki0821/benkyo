@@ -135,9 +135,11 @@
         let invincible = false; // 無敵状態を管理するフラグ
         let timerInterval;  // 経過時間をカウントするための変数
         let checkCollisionInterval; // 衝突チェックのための変数
+        let invincibilityTimeout; // 無敵状態を管理するためのタイマー
 
         // スタートボタンがクリックされたらゲーム開始
         startButton.addEventListener('click', function() {
+            resetGame(); // ゲームをリセット
             startGame(); // ゲームを開始
         });
 
@@ -146,26 +148,20 @@
             gameOver = false;
             elapsedTime = 0; // 経過時間をリセット
             lives = 2; // 残機をリセット
-            invincible = true; // スタート時は無敵状態にする
-            player.classList.add('invincible'); // プレイヤーを点滅させる
+            invincible = false; // 無敵状態をリセット
+            player.classList.remove('invincible'); // 無敵時の点滅解除
             livesDisplay.textContent = `残機: ${lives}`; // 残機表示を更新
             gameOverText.style.display = 'none'; // ゲームオーバーテキストを非表示
             startButton.style.display = 'none'; // スタートボタンを非表示
             obstacle.style.animationPlayState = 'running'; // 障害物のアニメーションを開始
-
-            // 3秒後に無敵状態を解除
-            setTimeout(() => {
-                invincible = false; // 無敵状態を解除
-                player.classList.remove('invincible'); // 点滅を終了
-            }, 3000); // 3秒間の無敵
         }
 
         // ゲームを開始する処理
         function startGame() {
-            if (gameStarted) return; // すでにゲームが始まっている場合は何もしない
-            resetGame(); // ゲームをリセット
             gameStarted = true;
-            checkCollisionInterval = setInterval(checkCollision, 50); // 衝突チェックを開始
+            invincibilityTimeout = setTimeout(() => {
+                checkCollisionInterval = setInterval(checkCollision, 50); // 3秒後に衝突チェックを開始
+            }, 3000); // 3秒間は衝突判定なし
             timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマーを更新
         }
 
@@ -226,11 +222,9 @@
         function endGame() {
             gameOver = true;
             gameStarted = false;
+            clearTimeout(invincibilityTimeout); // 無敵状態のタイマーを解除
             gameOverText.style.display = 'block'; // "Game Over" テキストを表示
             obstacle.style.animationPlayState = 'paused'; // 障害物のアニメーションを停止
             clearInterval(checkCollisionInterval); // 衝突チェックを停止
             clearInterval(timerInterval); // タイマーを停止
-            startButton.style.display = 'block'; // スタートボタンを再表示
-        }
-
-       
+            startButton.style.display = 'block'; // スタートボタンを再
